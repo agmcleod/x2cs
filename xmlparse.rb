@@ -12,18 +12,27 @@ module XmlParser
     build_headers(doc)
   end
   
+  def headers
+    @headers
+  end
+  
   private
     
   def build_headers(doc)
     @headers = []
     puts "Enter in node name to traverse. If it's an xml table of <Person> objects, type \"Person\" (without quotes)"
     node_to_traverse = gets.chomp
-    doc.css(node_to_traverse).each do |loc|
-      loc.children.each do |field|
-        @headers << field.name if field.name != "text" && !@headers.include?(field.name)
+    nodes = doc.css(node_to_traverse)
+    if nodes.size == 0
+      raise "Tag not found"
+    else
+      nodes.each do |loc|
+        loc.children.each do |field|
+          @headers << field.name if field.name != "text" && !@headers.include?(field.name)
+        end
       end
+      tag_found = true
     end
-    
     traverse_through_each_row(doc, node_to_traverse)
   end
   
