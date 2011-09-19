@@ -32,9 +32,11 @@ def load_test_files
   people << Person.new(name: 'Willis', email: 'nonexistant@example.com', phone: '416-233-7688', address: 'a test address')
   File.open('test_file.xml', 'w+') do |f|
     f.write("#{xml_header}\n")
+    f.write("<people>")
     people.each do |p|
       f.write("#{p.to_xml}\n")
     end
+    f.write("</people>")
   end
 end
 

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe XmlParser do
-  describe "init" do
+  describe "#init" do
     before(:each) do
       load_test_files
       XmlParser.stub!(:gets).and_return('test_file.xml')
@@ -25,7 +25,7 @@ describe XmlParser do
     end
   end
   
-  describe "build_headers" do
+  describe "#build_headers" do
     context "Load test files with 4 headers" do
       before(:each) do
         load_test_files
@@ -85,6 +85,28 @@ describe XmlParser do
       after(:each) do
         remove_test_files
       end
+    end
+  end
+  
+  describe "#traverse_through_each_row" do
+    before(:each) do
+      load_test_files
+      f = File.open('test_file.xml')
+      @doc = Nokogiri::XML(f)
+      f.close
+      
+      XmlParser.stub!(:gets).and_return('Person')
+      @headers = XmlParser.send(:build_headers, @doc).headers
+      XmlParser.stub!(:write_to_file)
+    end
+    
+    it "should populate @rows with 4 objects" do
+      XmlParser.send(:traverse_through_each_row, @doc, 'Person')
+      XmlParser.rows.size.should == 4
+    end
+    
+    after(:each) do
+      remove_test_files
     end
   end
 end

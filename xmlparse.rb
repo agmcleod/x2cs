@@ -16,6 +16,10 @@ module XmlParser
     @headers
   end
   
+  def rows
+    @rows
+  end
+  
   private
     
   def build_headers(doc)
@@ -37,13 +41,14 @@ module XmlParser
   end
   
   def traverse_through_each_row(doc, node_to_traverse)
-    rows = []
+    @rows = []
     count = 0
     doc.css(node_to_traverse).each do |loc|
       fields = Array.new(@headers.size)
       loc = populate_missing(@headers, loc)
       loc.children.each do |field|
         idx = @headers.index(field.name)
+        # if it's an element, grabs all sub data, and puts it together.
         if field.class == Nokogiri::XML::Element
           f = []
           field.children.each do |c|
@@ -57,16 +62,16 @@ module XmlParser
         end
       end
       count += 1
-      rows << fields.join(',')
+      @rows << fields.join(',')
     end
     
-    write_to_file(rows)
+    write_to_file
   end
   
-  def write_to_file(rows)
+  def write_to_file
     File.open("#{@xml_name}.csv", 'w+') do |file|
       file.write(@headers.join(',') + "\n")
-      rows.each do |r|
+      @rows.each do |r|
         file.write("#{r}\n")
       end
     end
