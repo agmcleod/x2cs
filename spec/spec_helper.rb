@@ -25,11 +25,10 @@ def xml_header
 end
 
 def load_test_files
-  people = []
-  people << Person.new(name: 'A person', email: 'test@something.com', phone: '555-233-3333', address: '444 test')
-  people << Person.new(name: 'John Smith', email: 'jsmith@fake.com', phone: '555-249-8833', address: '123 fake st')
-  people << Person.new(name: 'Jane Doe', email: 'example@something.ca', phone: '232-855-3422', address: '8643 Avenue Lane')
-  people << Person.new(name: 'Willis', email: 'nonexistant@example.com', phone: '416-233-7688', address: 'a test address')
+  write_tests_to_file(add_people)
+end
+
+def write_tests_to_file(people)
   File.open('test_file.xml', 'w+') do |f|
     f.write("#{xml_header}\n")
     f.write("<people>")
@@ -38,6 +37,23 @@ def load_test_files
     end
     f.write("</people>")
   end
+end
+
+def load_test_files_with_extra
+  people = add_people
+  people << Person.new(name: 'Jack johnson', email: '<emails><email>1@test.com</email><email>2@test.com</email></emails>', 
+    phone: '555-233-3333', address: '444 test')
+  people
+  write_tests_to_file(people)
+end
+
+def add_people
+  people = []
+  people << Person.new(name: 'A person', email: 'test@something.com', phone: '555-233-3333', address: '444 test')
+  people << Person.new(name: 'John Smith', email: 'jsmith@fake.com', phone: '555-249-8833', address: '123 fake st')
+  people << Person.new(name: 'Jane Doe', email: 'example@something.ca', phone: '232-855-3422', address: '8643 Avenue Lane')
+  people << Person.new(name: 'Willis', email: 'nonexistant@example.com', phone: '416-233-7688', address: 'a test address')
+  people
 end
 
 def remove_test_files

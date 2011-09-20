@@ -48,17 +48,12 @@ module XmlParser
       loc = populate_missing(@headers, loc)
       loc.children.each do |field|
         idx = @headers.index(field.name)
-        # if it's an element, grabs all sub data, and puts it together.
         if field.class == Nokogiri::XML::Element
           f = []
           field.children.each do |c|
-            text = strip(c.text)
-            f << text unless text.empty?
+            f = recursive_iteration(c, f)
           end
           fields[idx] = "#{enclose(f.join('|'))}"
-        else
-          f = enclose_and_strip(field.text)
-          fields[idx] = "#{f}" unless f.empty?
         end
       end
       count += 1
@@ -66,6 +61,20 @@ module XmlParser
     end
     
     write_to_file
+  end
+  
+  def recursive_iteration(c, f)
+    if c.class == Nokogiri::XML::Element
+      if c.children.size > 0
+        c.children.each do |child|
+          f = recursive_iteration(child, f)
+        end
+      end
+    else
+      text = strip(c.text)
+      f << text unless text.empty?
+    end
+    f
   end
   
   def write_to_file

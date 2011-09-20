@@ -90,7 +90,7 @@ describe XmlParser do
   
   describe "#traverse_through_each_row" do
     before(:each) do
-      load_test_files
+      load_test_files_with_extra
       f = File.open('test_file.xml')
       @doc = Nokogiri::XML(f)
       f.close
@@ -100,9 +100,16 @@ describe XmlParser do
       XmlParser.stub!(:write_to_file)
     end
     
-    it "should populate @rows with 4 objects" do
+    it "should populate @rows with 5 objects" do
       XmlParser.send(:traverse_through_each_row, @doc, 'Person')
-      XmlParser.rows.size.should == 4
+      XmlParser.rows.size.should == 5
+    end
+    
+    it "row[4] should contain multiple values in email field" do
+      XmlParser.send(:traverse_through_each_row, @doc, 'Person')
+      r = XmlParser.rows[4]
+      puts r
+      r.index("1@test.com|2@test.com").should_not be_nil
     end
     
     after(:each) do
