@@ -14,10 +14,6 @@ class Person
   def to_xml
     "<Person><name>#{name}</name><email>#{email}</email><phone>#{phone}</phone><address>#{address}</address></Person>"
   end
-  
-  def missing_column
-    "<Person><name>#{name}</name><email>#{email}</email><address>#{address}</address></Person>"
-  end
 end
 
 def xml_header
@@ -45,6 +41,19 @@ def load_test_files_with_extra
     phone: '555-233-3333', address: '444 test')
   people
   write_tests_to_file(people)
+end
+
+def load_test_files_with_missing
+  people = add_people
+  File.open('test_file.xml', 'w+') do |f|
+    f.write("#{xml_header}\n")
+    f.write("<people>")
+    people.each do |p|
+      f.write("#{p.to_xml}\n")
+    end
+    f.write("<Person><name>A test name</name><email>something@you.com</email><address>test address</address></Person>\n")
+    f.write("</people>")
+  end
 end
 
 def add_people

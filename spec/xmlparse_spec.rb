@@ -108,12 +108,61 @@ describe XmlParser do
     it "row[4] should contain multiple values in email field" do
       XmlParser.send(:traverse_through_each_row, @doc, 'Person')
       r = XmlParser.rows[4]
-      puts r
       r.index("1@test.com|2@test.com").should_not be_nil
     end
     
     after(:each) do
       remove_test_files
+    end
+  end
+  
+  
+  describe "#populate_missing" do
+    
+    context "files have all headers for each record" do
+      before(:each) do
+        load_test_files
+        f = File.open('test_file.xml')
+        @doc = Nokogiri::XML(f)
+        f.close
+        
+        XmlParser.stub!(:gets).and_return('Person')
+      end
+      
+      it "first_node have a child size of 4 after the method call" do
+        first_node = @doc.css('Person').first
+        XmlParser.send(:populate_missing, first_node)
+        first_node.children.size.should == 4
+      end
+      
+      after(:each) do
+        remove_test_files
+      end
+    end
+    
+    context "One row is missing a header" do
+      before(:each) do
+        load_test_files_with_missing
+        f = File.open('test_file.xml')
+        @doc = Nokogiri::XML(f)
+        f.close
+        XmlParser.stub!(:gets).and_return('Person')
+      end
+      
+      it "last_node should have a child size of 3 before the method call" do
+        last_node = @doc.css('Person').last
+        last_node.children.size.should == 3
+      end
+      
+      it "last_node should have a child size of 4 after the method call" do
+        last_node = @doc.css('Person').last
+        XmlParser.send(:populate_missing, last_node)
+        last_node.children.size.should == 4
+      end
+      
+      after(:each) do
+        remove_test_files
+      end
     end
   end
 end

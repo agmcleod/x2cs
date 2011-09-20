@@ -45,7 +45,7 @@ module XmlParser
     count = 0
     doc.css(node_to_traverse).each do |loc|
       fields = Array.new(@headers.size)
-      loc = populate_missing(@headers, loc)
+      loc = populate_missing(loc)
       loc.children.each do |field|
         idx = @headers.index(field.name)
         if field.class == Nokogiri::XML::Element
@@ -102,14 +102,14 @@ module XmlParser
     return str.gsub(/\n|\t/, '').strip
   end
   
-  def populate_missing(headers, location)
+  def populate_missing(location)
     h = []
     location.children.each do |c|
       h << c.name if c.name != "text"
     end
     h.sort
-    if h != headers
-      h = headers - h
+    if h != @headers
+      h = @headers - h
       h.each { |mh| location.add_child("<#{mh} />") }
     end
     return location
