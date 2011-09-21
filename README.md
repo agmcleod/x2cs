@@ -10,11 +10,11 @@ Note, I've only tested this on ruby 1.9.2. I am not sure of compatibility with 1
 
 ## Usage
 
-After installing the gem, simply do the following:
+After installing the gem, simply complete the following steps:
 
     x2cs
     
-Enter in the path of an xml file.
+When prompted, enter in the path of an xml file.
 
 Once the file is entered, you will be prompted to enter in the tag name of the entity(ies) you wish to convert. If you have a table containing
 contact objects, such as:
