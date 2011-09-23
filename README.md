@@ -2,6 +2,8 @@
 
 ## Installing
 
+_requires an install of Nokogiri gem_
+
 With ruby installed, simply run:
 
     gem install x2cs
